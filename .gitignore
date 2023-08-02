@@ -1,8 +1,8 @@
 *.ipynb
-./*.txt
+/*.txt
 test.py
-又三郎
-tmp
+又三郎/
+tmp/
 *.jpg
 
 # Byte-compiled / optimized / DLL files
