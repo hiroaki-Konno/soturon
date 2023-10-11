@@ -75,17 +75,19 @@ class PosTrim:
         current_frame = 0
         interval_sec = cls.DEFAULT_INTERVAL_SEC
         interval_frame = round(interval_sec * prop_fps)
+
+        # 楽譜の範囲を指定
         # pos1, pos2 = (0,0), (1920, 1080)
         # 本来ならforループ内で逐次変更しながらやる想定
-        sp = ScorePosition()
-        pos1, pos2 = sp.mock_get_pos()
+        score_pos = ScorePosition()
+        pos1, pos2 = score_pos.mock_get_pos()
 
         """ トリミング間隔を調整しながらやる場合の構造
         while 最終フレームまで: 
           for i in range(現在フレーム, 最終フレーム, 幅):
               トリミング処理、重複チェック、インターバル調整など
         return score_images """
-        
+        # トリミングの繰り返し処理
         for specified_frame_count in range(interval_frame, prop_frame_count+interval_frame, interval_frame):
             cap.set(cv2.CAP_PROP_POS_FRAMES, specified_frame_count)
             _ , frame = cap.retrieve()
