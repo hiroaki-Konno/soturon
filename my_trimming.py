@@ -81,7 +81,8 @@ class PosTrim:
         # pos1, pos2 = (0,0), (854, 480)
         # 本来ならforループ内で逐次変更しながらやる想定
         score_pos = ScorePosition()
-        pos1, pos2 = score_pos.mock_get_pos()
+        # pos1, pos2 = score_pos.mock_get_pos()
+        pos1, pos2 = score_pos.mock_takane()
 
         """ トリミング間隔を調整しながらやる場合の構造
         while 最終フレームまで: 
