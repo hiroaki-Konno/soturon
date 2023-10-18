@@ -78,6 +78,7 @@ class PosTrim:
 
         # 楽譜の範囲を指定
         # pos1, pos2 = (0,0), (1920, 1080)
+        # pos1, pos2 = (0,0), (854, 480)
         # 本来ならforループ内で逐次変更しながらやる想定
         score_pos = ScorePosition()
         pos1, pos2 = score_pos.mock_get_pos()
