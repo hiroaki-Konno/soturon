@@ -5,6 +5,7 @@ test.py
 高嶺の花子さん/
 tmp/
 *.jpg
+_old/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
