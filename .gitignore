@@ -4,6 +4,8 @@ test.py
 又三郎/
 高嶺の花子さん/
 tmp/
+tmp_takane/
+test_imgdist/
 *.jpg
 _old/
 *.mp4
