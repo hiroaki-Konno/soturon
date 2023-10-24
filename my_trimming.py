@@ -1,4 +1,5 @@
 import cv2
+import imgsim
 import os
 import shutil
 
@@ -71,7 +72,12 @@ class PosTrim:
         prop_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         prop_fps = cap.get(cv2.CAP_PROP_FPS)
 
+        vtr = imgsim.Vectorizer()
+
+        # ループ内用リスト
         score_images = []
+        score_vecs = []
+
         current_frame = 0
         interval_sec = cls.DEFAULT_INTERVAL_SEC
         interval_frame = round(interval_sec * prop_fps)
@@ -95,8 +101,26 @@ class PosTrim:
             _ , frame = cap.retrieve()
 
             trimmed_score = cls.trim_image(frame, pos1, pos2)
-            score_images.append(trimmed_score)
 
+            # 画像の重複に基づく追加などの処理
+            # 最初の一枚はとりあえず追加
+            if len(score_images)==0:
+                score_images.append(trimmed_score)
+                score_vecs.append(vtr.vectorize(trimmed_score))
+                continue
+
+            # before_score = score_images[-1]
+            # before_score_vec = vtr.vectorize(before_score)
+            before_score_vec = score_vecs[-1]
+            trimmed_score_vec = vtr.vectorize(trimmed_score)
+            dist = imgsim.distance(before_score_vec, trimmed_score_vec)
+            print(dist)
+
+            # if distに条件をつける
+            score_images.append(trimmed_score)
+            score_vecs.append(trimmed_score_vec)
+
+            # 動画の尺(フレーム)が終わったら終了
             if prop_frame_count < current_frame:
                 return score_images
             
