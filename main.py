@@ -5,10 +5,16 @@ from my_trimming import PosTrim as pt
 def main():
     # 画像の読み込み
     # video_name = "video"
-    video_name = "480p-高嶺の花子さん_不朽の名作~"
+    # video_name = "480p-高嶺の花子さん_不朽の名作~"
+    video_name = "何故か着地が下手くそなアホウドリ"
     path_to_video = f'./data/{video_name}.mp4'
+
     # path_to_save_score = "./tmp"
-    path_to_save_score = "./test_imgdist"
+    path_to_save_score = "./test_ahodri"
+
+    # pic_name = "tmp_frame"
+    pic_name = "tmp_ahodori"
+
     video = cv2.VideoCapture(path_to_video)
 
     if not video.isOpened():
@@ -16,7 +22,7 @@ def main():
         sys.exit()
     
     trimmed_socres = pt.trim_video(video)
-    pt.save_image_files(trimmed_socres, path_to_save_score)
+    pt.save_image_files(trimmed_socres, path_to_save_score, pic_name)
 
 
 if __name__ == "__main__":

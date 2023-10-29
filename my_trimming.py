@@ -127,7 +127,7 @@ class PosTrim:
         return score_images
     
     @staticmethod
-    def save_image_files(score_images: list, folder_path: str)-> None:
+    def save_image_files(score_images: list, folder_path: str, pic_name: str = "tmp_frame")-> None:
         """ 画像のリストを受け取り、画像ファイルとして保存する
         
         Parameters
@@ -144,7 +144,7 @@ class PosTrim:
 
         # 画像をリストから保存
         for i, score_image in enumerate(score_images):
-            file_path = os.path.join(folder_path, f"tmp_frame{i+1:02}.jpg")
+            file_path = os.path.join(folder_path, f"{pic_name}{i+1:02}.jpg")
             # print(file_path)
             is_succeed_to_save_file = cv2.imwrite(file_path, score_image)
             
