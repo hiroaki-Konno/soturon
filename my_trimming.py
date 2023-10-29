@@ -7,6 +7,7 @@ from my_score_pos import ScorePosition
 
 class PosTrim:
     DEFAULT_INTERVAL_SEC = 3
+    DEFAULT_VEC = imgsim.Vectorizer()
     # def __init__(self, file_path, pos1, pos2) -> None:
     #     """ 座標によるトリミング用のクラス
 
@@ -50,6 +51,47 @@ class PosTrim:
         x2, y2 = max(pos1[0], pos2[0]), max(pos1[1], pos2[1])
         return frame[y1:y2, x1:x2]
     
+    @classmethod
+    def compare_image_for_overlap(cls, score_images, score_vecs, trimmed_score):
+        """ トリミングされたフレーム画像が前の楽譜画像と重複していないか比較する
+
+        Parameters
+        ----------
+        score_images: list(ndarray)
+            トリミングされた楽譜画像のリスト
+        score_vecs: list(ndarray)
+            score_imagesに格納された楽譜画像をベクトル化したもののリスト
+        trimmed_score: ndarray
+            トリミングされたフレーム画像
+        
+        Returns
+        -------
+        score_images: list(ndarray)
+            トリミングされた重複していない楽譜画像のリストを返す
+        score_vecs: list(ndarray)
+            トリミングされた重複していない楽譜画像のをベクトル化したもののリストを返す
+        """
+        vtr = cls.DEFAULT_VEC
+
+        # 最初の一枚はとりあえず追加
+        if len(score_images)==0:
+            score_images.append(trimmed_score)
+            score_vecs.append(vtr.vectorize(trimmed_score))
+            return score_images, score_vecs
+
+        # before_score = score_images[-1]
+        # before_score_vec = vtr.vectorize(before_score)
+        before_score_vec = score_vecs[-1]
+        trimmed_score_vec = vtr.vectorize(trimmed_score)
+        dist = imgsim.distance(before_score_vec, trimmed_score_vec)
+        print(dist)
+
+        # if distに条件をつける
+        score_images.append(trimmed_score)
+        score_vecs.append(trimmed_score_vec)
+        return score_images, score_vecs
+
+    
     # クラス変数にアクセスする、インスタンスに依存しない
     # -> classmethod
     @classmethod
@@ -72,7 +114,7 @@ class PosTrim:
         prop_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         prop_fps = cap.get(cv2.CAP_PROP_FPS)
 
-        vtr = imgsim.Vectorizer()
+        vtr = cls.DEFAULT_VEC
 
         # ループ内用リスト
         score_images = []
@@ -103,22 +145,7 @@ class PosTrim:
             trimmed_score = cls.trim_image(frame, pos1, pos2)
 
             # 画像の重複に基づく追加などの処理
-            # 最初の一枚はとりあえず追加
-            if len(score_images)==0:
-                score_images.append(trimmed_score)
-                score_vecs.append(vtr.vectorize(trimmed_score))
-                continue
-
-            # before_score = score_images[-1]
-            # before_score_vec = vtr.vectorize(before_score)
-            before_score_vec = score_vecs[-1]
-            trimmed_score_vec = vtr.vectorize(trimmed_score)
-            dist = imgsim.distance(before_score_vec, trimmed_score_vec)
-            print(dist)
-
-            # if distに条件をつける
-            score_images.append(trimmed_score)
-            score_vecs.append(trimmed_score_vec)
+            score_images, score_vecs = cls.compare_image_for_overlap(score_images, score_vecs, trimmed_score)
 
             # 動画の尺(フレーム)が終わったら終了
             if prop_frame_count < current_frame:
