@@ -1,4 +1,5 @@
 import cv2
+import os
 import sys
 from my_trimming import PosTrim as pt
 
@@ -7,10 +8,13 @@ def main():
     # video_name = "video"
     # video_name = "480p-高嶺の花子さん_不朽の名作~"
     video_name = "何故か着地が下手くそなアホウドリ"
-    path_to_video = f'./data/{video_name}.mp4'
+    path_to_video = f'./videos/{video_name}.mp4'
 
-    # path_to_save_score = "./tmp"
-    path_to_save_score = "./test_ahodri"
+    score_folder_path = "./pics"
+    # folder_name = "tmp"
+    new_score_folder_name = "test_ahodri"
+
+    path_to_save_score = os.path.join(score_folder_path, new_score_folder_name)  
 
     # pic_name = "tmp_frame"
     pic_name = "tmp_ahodori"

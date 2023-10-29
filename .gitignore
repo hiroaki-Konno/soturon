@@ -1,13 +1,17 @@
 *.ipynb
 /*.txt
 test.py
-又三郎/
-高嶺の花子さん/
+# 又三郎/
+# 高嶺の花子さん/
+
+pics/
+videos/
+_old/
+
 tmp/
 tmp_takane/
 test_imgdist/
 *.jpg
-_old/
 *.mp4
 
 # Byte-compiled / optimized / DLL files
