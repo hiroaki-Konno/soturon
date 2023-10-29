@@ -3,6 +3,12 @@ import os
 import sys
 from my_trimming import PosTrim as pt
 
+def mock_get_frame(cap):
+    any_frame = 30
+    cap.set(cv2.CAP_PROP_POS_FRAMES, any_frame)
+    _ , frame = cap.retrieve()
+    return [frame]
+
 def main():
     # 画像の読み込み
     # video_name = "video"
@@ -25,7 +31,9 @@ def main():
         print("video is not opend in main.py")
         sys.exit()
     
-    trimmed_socres = pt.trim_video(video)
+    # trimmed_socres = pt.trim_video(video)
+    trimmed_socres = mock_get_frame(video)
+
     pt.save_image_files(trimmed_socres, path_to_save_score, pic_name)
 
 
