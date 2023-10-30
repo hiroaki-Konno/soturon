@@ -3,6 +3,10 @@ import os
 import sys
 from my_trimming import PosTrim as pt
 
+VIDEO_FOLDER_PATH = "./videos"
+SCORE_FOLDER_PATH = "./pics"
+
+
 def mock_get_frame(cap):
     any_frame = 30
     cap.set(cv2.CAP_PROP_POS_FRAMES, any_frame)
@@ -25,13 +29,14 @@ def main():
     # video_name = "video"
     # video_name = "480p-高嶺の花子さん_不朽の名作~"
     video_name = ".test_何故か着地が下手くそなアホウドリ"
-    path_to_video = f'./videos/{video_name}.mp4'
 
-    score_folder_path = "./pics"
+    # path_to_video = f'./videos/{video_name}.mp4'
+    path_to_video = os.path.join(VIDEO_FOLDER_PATH, video_name+".mp4")
+
     # folder_name = "tmp"
     new_score_folder_name = "loc_score"
 
-    path_to_save_score = os.path.join(score_folder_path, new_score_folder_name)  
+    path_to_save_score = os.path.join(SCORE_FOLDER_PATH, new_score_folder_name)  
 
     # pic_name = "tmp_frame"
     pic_name = "tmp_ahodori"
@@ -42,11 +47,9 @@ def main():
         print("video is not opend in main.py")
         sys.exit()
     
-    # trimmed_socres = pt.trim_video(video)
-    trimmed_socres = mock_get_frame(video)
-
-    # pt.save_image_files(trimmed_socres, path_to_save_score, pic_name)
-    mock_save_frame(trimmed_socres, path_to_save_score, pic_name)
+    # 本来の処理
+    trimmed_socres = pt.trim_video(video)
+    pt.save_image_files(trimmed_socres, path_to_save_score, pic_name)
 
 
 if __name__ == "__main__":
