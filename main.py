@@ -53,6 +53,9 @@ def main():
 
     # 座標取得用に全動画からフレームを抜き出すプログラム
     for video_name in os.listdir(VIDEO_FOLDER_PATH):
+        # if video_name != "480p-高嶺の花子さん.mp4":
+        #     continue
+
         # path生成
         path_to_video = os.path.join(VIDEO_FOLDER_PATH, video_name)
         
@@ -67,6 +70,7 @@ def main():
         # 画像名称修正
         pic_name = os.path.splitext(os.path.basename(video_name))[0]
         # print(pic_name)
+        # os.rename(os.path.join(path_to_save_score, tmp_name+"_loc_score.jpg"), os.path.join(path_to_save_score, pic_name+"_loc_score_1620.jpg"))
         os.rename(os.path.join(path_to_save_score, tmp_name+"_loc_score.jpg"), os.path.join(path_to_save_score, pic_name+"_loc_score.jpg"))
 
 if __name__ == "__main__":
