@@ -95,7 +95,7 @@ class PosTrim:
     # クラス変数にアクセスする、インスタンスに依存しない
     # -> classmethod
     @classmethod
-    def trim_video(cls, cap):
+    def trim_video(cls, cap, video_name):
         """ 動画のトリミングを行う
         動画内で楽譜位置が変更される場合はここで調整
         画像の重複チェック、インターバルの調整もここに含む
@@ -104,6 +104,9 @@ class PosTrim:
         ----------
         cap: cv2.VideoCapture
             画質が1920*1080のcv2で読み込まれた動画
+        video_name: str
+            動画の名称、本来なら消したい
+            手動で特定した座標をまとめた辞書へのアクセス用
         
         Returns
         -------
@@ -129,8 +132,10 @@ class PosTrim:
         # pos1, pos2 = (0,0), (854, 480)
         # 本来ならforループ内で逐次変更しながらやる想定
         score_pos = ScorePosition()
-        # pos1, pos2 = score_pos.mock_get_pos()
-        pos1, pos2 = score_pos.mock_takane()
+        pos1, pos2 = score_pos.mock_get_pos(video_name)
+        print("check:", video_name, pos1, pos2)
+        
+        # pos1, pos2 = score_pos.mock_takane()
 
         """ トリミング間隔を調整しながらやる場合の構造
         while 最終フレームまで: 

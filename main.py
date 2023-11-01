@@ -27,19 +27,19 @@ def mock_save_frame(score_images: list, folder_path: str, pic_name: str = "tmp_f
 def main():
     # 画像の読み込み
     # video_name = "video"
-    # video_name = "480p-高嶺の花子さん_不朽の名作~"
-    video_name = ".test_何故か着地が下手くそなアホウドリ"
+    # video_name = ".test_何故か着地が下手くそなアホウドリ"
+    video_name = "サマータイムレコード"
 
     # path_to_video = f'./videos/{video_name}.mp4'
     path_to_video = os.path.join(VIDEO_FOLDER_PATH, video_name+".mp4")
 
     # folder_name = "tmp"
-    new_score_folder_name = "loc_score"
+    new_score_folder_name = "tmp_samareko"
 
     path_to_save_score = os.path.join(SCORE_FOLDER_PATH, new_score_folder_name)  
 
     # pic_name = "tmp_frame"
-    pic_name = "tmp_ahodori"
+    pic_name = "tmp_samareko"
 
     video = cv2.VideoCapture(path_to_video)
 
@@ -48,7 +48,7 @@ def main():
         sys.exit()
     
     # 本来の処理
-    trimmed_socres = pt.trim_video(video)
+    trimmed_socres = pt.trim_video(video, video_name)
     pt.save_image_files(trimmed_socres, path_to_save_score, pic_name)
 
 
