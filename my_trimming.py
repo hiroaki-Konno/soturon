@@ -176,7 +176,7 @@ class PosTrim:
 
         # 画像をリストから保存
         for i, score_image in enumerate(score_images):
-            file_path = os.path.join(folder_path, f"{pic_name}{i+1:02}.jpg")
+            file_path = os.path.join(folder_path, f"{pic_name}{i+1:03}.jpg")
             # print(file_path)
             is_succeed_to_save_file = cv2.imwrite(file_path, score_image)
             

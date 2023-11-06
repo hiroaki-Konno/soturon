@@ -14,6 +14,7 @@ tmp_takane/
 test_imgdist/
 *.jpg
 *.mp4
+*.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
