@@ -113,6 +113,6 @@ indexes_dict ={
     "tmp_tentai":[3, 5, 7, 9, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 70, 72, 74, 76, 78, 80, 82, 84],
 }
 
-i = 8
-song_folder_name = song_folder_ls[i]
-gene_html(song_folder_name=song_folder_name, song_name=song_name_ls[i][:-4], ideal_score_indexes=indexes_dict[song_folder_name])
+for i in range(len(song_folder_ls)):
+    song_folder_name = song_folder_ls[i]
+    gene_html(song_folder_name=song_folder_name, song_name=song_name_ls[i][:-4], ideal_score_indexes=indexes_dict[song_folder_name])
