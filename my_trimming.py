@@ -151,6 +151,9 @@ class PosTrim:
 
             # 画像の重複に基づく追加などの処理
             score_images, score_vecs = cls.compare_image_for_overlap(score_images, score_vecs, trimmed_score)
+            
+            # トリミングのみならこの上の行をコメントアウト、下の行を非コメント化
+            # score_images.append(trimmed_score)
 
             # 動画の尺(フレーム)が終わったら終了
             if prop_frame_count < current_frame:

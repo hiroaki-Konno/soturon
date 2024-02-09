@@ -68,8 +68,8 @@ def gene_html(song_folder_name : str = "test_ahodri2", song_name : str = "曲名
 
     print(ret_html) 
 
-    # path1 = os.path.dirname(__file__) + "/" 
-    # file1 = path1 + "html1.html" 
-    # write1(file1, ret_html) 
+    path1 = os.path.dirname(__file__) + "/" 
+    file1 = path1 + "html1.html" 
+    write1(file1, ret_html) 
 
-gene_html()
+gene_html("tmp_kodoku", "孤独")
