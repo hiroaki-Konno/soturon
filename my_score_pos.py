@@ -14,6 +14,15 @@ class ScorePosition:
     }
 
     def __init__(self, pos1=(0,0), pos2=(0,0)) -> None:
+        """楽譜の座標範囲を保持するインスタンスを初期化する
+
+        Parameters
+        ----------
+        pos1: tuple(int, int)
+            楽譜領域の左上座標（デフォルトは原点）
+        pos2: tuple(int, int)
+            楽譜領域の右下座標（デフォルトは原点）
+        """
         self.pos1 = pos1
         self.pos2 = pos2
         # 1080pの場合

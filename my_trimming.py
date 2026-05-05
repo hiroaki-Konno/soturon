@@ -191,6 +191,7 @@ class PosTrim:
         
 
     def improve_interval():
+        """トリミングのインターバル（フレーム間隔）を動的に調整する（未実装）"""
         pass
     # def __init__(self, param1, param2, param3):
     #     """Example of docstring on the __init__ method.

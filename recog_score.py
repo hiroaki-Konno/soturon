@@ -16,6 +16,15 @@ scor_img = "./pics/loc_score/480p_takane_loc_score_1620.jpg"
 
 #指定したデータを指定したファイル名で出力
 def debug_image(img, imgname = 'result.png'):
+	"""デバッグ用に画像をBASE_PATHへ保存する
+
+	Parameters
+	----------
+	img: ndarray
+		保存したい画像データ
+	imgname: str
+		保存するファイル名（デフォルトは 'result.png'）
+	"""
 	global BASE_PATH
 	#画像を出力
 	cv2.imwrite(BASE_PATH + imgname, img)

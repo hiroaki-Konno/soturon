@@ -18,6 +18,15 @@ scor_img = "./pics/loc_score/480p_samareko_loc_score_1620.jpg"
 
 #指定したデータを指定したファイル名で出力
 def debug_image(img, imgname = 'result.png'):
+	"""デバッグ用に画像をBASE_PATHへ保存する
+
+	Parameters
+	----------
+	img: ndarray
+		保存したい画像データ
+	imgname: str
+		保存するファイル名（デフォルトは 'result.png'）
+	"""
 	global BASE_PATH
 	#画像を出力
 	cv2.imwrite(BASE_PATH + imgname, img)
@@ -35,6 +44,20 @@ dst = cv2.cvtColor(scr, cv2.COLOR_RGB2GRAY)
 # debug_image(dst, 'note_01.png')
 
 def gazo_shori(scr_filled, debug=False):
+    """グレースケール画像に閾値処理・白黒反転・2値化を順に適用して返す
+
+    Parameters
+    ----------
+    scr_filled: ndarray
+        処理対象のグレースケール画像
+    debug: bool
+        Trueの場合、各処理段階の画像をファイルに出力する
+
+    Returns
+    -------
+    ndarray
+        2値化処理後の画像
+    """
     #閾値指定してフィルタリング　②
     retval, dst = cv2.threshold(scr_filled, 130, 255, cv2.THRESH_TOZERO_INV )
 

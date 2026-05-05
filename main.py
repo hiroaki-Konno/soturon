@@ -8,12 +8,35 @@ SCORE_FOLDER_PATH = "./pics"
 
 
 def mock_get_frame(cap):
+    """動画の30フレーム目を取得して返す（座標確認用のモック関数）
+
+    Parameters
+    ----------
+    cap: cv2.VideoCapture
+        cv2で読み込まれた動画オブジェクト
+
+    Returns
+    -------
+    list(ndarray)
+        取得したフレーム画像を格納したリスト
+    """
     any_frame = 30
     cap.set(cv2.CAP_PROP_POS_FRAMES, any_frame)
     _ , frame = cap.retrieve()
     return [frame]
 
 def mock_save_frame(score_images: list, folder_path: str, pic_name: str = "tmp_frame")-> None:
+    """楽譜画像リストの先頭画像を1枚ファイルに保存する（座標確認用のモック関数）
+
+    Parameters
+    ----------
+    score_images: list(ndarray)
+        保存したい画像を格納したリスト（先頭の1枚のみ保存される）
+    folder_path: str
+        保存先フォルダのパス
+    pic_name: str
+        保存するファイルの基底名
+    """
     file_path = os.path.join(folder_path, f"{pic_name}_loc_score.jpg")
     is_succeed_to_save_file = cv2.imwrite(file_path, score_images[0])
             
@@ -25,6 +48,7 @@ def mock_save_frame(score_images: list, folder_path: str, pic_name: str = "tmp_f
     print("Succeed to save image file.")
 
 def main():
+    """動画から楽譜画像をトリミングして保存するメイン処理"""
     # 画像の読み込み
     # video_name = "video"
     # video_name = ".test_何故か着地が下手くそなアホウドリ"

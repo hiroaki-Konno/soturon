@@ -1,9 +1,18 @@
 import os
 
-def write1( file1, str1 ): 
-    with open( file1, 'w', encoding='utf-8' ) as f1: 
-        f1.write( str1 ) 
-    return 0 
+def write1( file1, str1 ):
+    """文字列をUTF-8エンコードでファイルに書き込む
+
+    Parameters
+    ----------
+    file1: str
+        書き込み先のファイルパス
+    str1: str
+        書き込む文字列
+    """
+    with open( file1, 'w', encoding='utf-8' ) as f1:
+        f1.write( str1 )
+    return 0
 
 
 PIC_DIR_PATH = "./pics"
