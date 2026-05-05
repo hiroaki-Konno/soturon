@@ -1,7 +1,7 @@
 import cv2
 import os
 import sys
-from my_trimming import PosTrim as pt
+from core.trimming import PosTrim as pt
 from settings import VIDEO_FOLDER_PATH, SCORE_FOLDER_PATH
 
 
@@ -55,7 +55,7 @@ def main():
     video = cv2.VideoCapture(path_to_video)
 
     if not video.isOpened():
-        print("video is not opend in main.py")
+        print("video is not opend in run.py")
         sys.exit()
 
     trimmed_socres = pt.trim_video(video, video_name)

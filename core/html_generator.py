@@ -45,7 +45,7 @@ BASE_HTML = '''<html>
 
 def gene_html(song_folder_name, song_name):
     """曲の楽譜のフォルダ名と曲名から楽譜のhtmlを生成する
-    
+
     Parameters
     ----------
     song_folder_name: str
@@ -53,14 +53,12 @@ def gene_html(song_folder_name, song_name):
     song_name: str
         生成する楽譜の曲名、html内のタイトルなどに使用
     """
-    # 楽譜画像のパスを生成
     song_dir_path = os.path.join(PIC_DIR_PATH, song_folder_name)
 
-    # body1の生成
     body1 = ""
     for img in os.listdir(song_dir_path):
         body1 += """<img src="{}">\n\t""".format(os.path.join(song_dir_path, img))
-    
+
     body1 = body1[:-2]
 
     kw_dict = {
@@ -68,14 +66,10 @@ def gene_html(song_folder_name, song_name):
         "body1" : body1
     }
 
-    # 置換に{}を用いるが、sytleの定義でも中括弧を使っているので
-    # それをエスケープするために二つ重ねる -> {{}}
     ret_html = BASE_HTML.format(**kw_dict)
 
-    print(ret_html) 
+    print(ret_html)
 
-    path1 = os.path.dirname(__file__) + "/" 
-    file1 = path1 + "html1.html" 
-    write1(file1, ret_html) 
-
-gene_html("tmp_kodoku", "孤独")
+    path1 = os.path.dirname(__file__) + "/"
+    file1 = path1 + "html1.html"
+    write1(file1, ret_html)

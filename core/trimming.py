@@ -3,7 +3,7 @@ import imgsim
 import os
 import shutil
 
-from my_score_pos import ScorePosition
+from core.score_pos import ScorePosition
 from settings import DEFAULT_INTERVAL_SEC
 
 class PosTrim:

@@ -1,5 +1,3 @@
-# recognite music score position in video
-
 class Coordinate:
     """楽譜座標を保持するクラス。直接ピクセル値または比率+解像度の2方式に対応。"""
 
@@ -108,32 +106,12 @@ class ScorePosition:
     }
 
     def __init__(self, pos1: Coordinate = None, pos2: Coordinate = None) -> None:
-        """楽譜の座標範囲を保持するインスタンスを初期化する
-
-        Parameters
-        ----------
-        pos1 : Coordinate, optional
-            楽譜領域の左上座標
-        pos2 : Coordinate, optional
-            楽譜領域の右下座標
-        """
         self.pos1 = pos1 if pos1 is not None else Coordinate.from_pixels(0, 0)
         self.pos2 = pos2 if pos2 is not None else Coordinate.from_pixels(0, 0)
 
     @classmethod
     def mock_get_pos(cls, video_name) -> 'ScorePosition':
-        """mock_pos_dictから該当動画の楽譜座標を ScorePosition インスタンスで返す
-
-        Parameters
-        ----------
-        video_name : str
-            動画の名称（mock_pos_dictのキー）
-
-        Returns
-        -------
-        ScorePosition
-            楽譜領域の座標を持つインスタンス
-        """
+        """mock_pos_dictから該当動画の楽譜座標を ScorePosition インスタンスで返す"""
         coord1, coord2 = cls.mock_pos_dict[video_name]
         return cls(pos1=coord1, pos2=coord2)
 
