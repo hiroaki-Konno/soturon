@@ -2,9 +2,7 @@ import cv2
 import os
 import sys
 from my_trimming import PosTrim as pt
-
-VIDEO_FOLDER_PATH = "./videos"
-SCORE_FOLDER_PATH = "./pics"
+from settings import VIDEO_FOLDER_PATH, SCORE_FOLDER_PATH
 
 
 def mock_get_frame(cap):

@@ -4,9 +4,10 @@ import os
 import shutil
 
 from my_score_pos import ScorePosition
+from settings import DEFAULT_INTERVAL_SEC
 
 class PosTrim:
-    DEFAULT_INTERVAL_SEC = 3
+    DEFAULT_INTERVAL_SEC = DEFAULT_INTERVAL_SEC
     DEFAULT_VEC = imgsim.Vectorizer()
     # def __init__(self, file_path, pos1, pos2) -> None:
     #     """ 座標によるトリミング用のクラス

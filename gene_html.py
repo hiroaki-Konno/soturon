@@ -1,4 +1,5 @@
 import os
+from settings import PIC_DIR_PATH
 
 def write1( file1, str1 ):
     """文字列をUTF-8エンコードでファイルに書き込む
@@ -15,7 +16,6 @@ def write1( file1, str1 ):
     return 0
 
 
-PIC_DIR_PATH = "./pics"
 BASE_HTML = '''<html>
     <head>
         <style>

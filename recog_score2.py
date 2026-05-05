@@ -6,15 +6,14 @@ import numpy
 import cv2
 import os
 import sys
+from settings import DEBUG_BASE_PATH, RECOG_SCORE2_IMG
 
 #パスのベースを作成
 DS = os.sep
-# BASE_PATH = os.path.dirname(__file__) + DS
-BASE_PATH = "./pics/test_ahodri/"
+BASE_PATH = DEBUG_BASE_PATH
 
 #楽譜画像のパスを生成
-# scor_img = BASE_PATH + 'score' + DS + 'score.jpg'
-scor_img = "./pics/loc_score/480p_samareko_loc_score_1620.jpg"
+scor_img = RECOG_SCORE2_IMG
 
 #指定したデータを指定したファイル名で出力
 def debug_image(img, imgname = 'result.png'):
