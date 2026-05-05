@@ -37,11 +37,11 @@ class PosTrim:
         ----------
         frame: ndarray
             トリミングしたい動画のフレーム画像
-        pos1 : tuple(int)
+        pos1 : tuple(int, int)
             切り抜きたい画像の角の座標(左上推奨)
-        pos2 : tuple(int)
+        pos2 : tuple(int, int)
             切り抜きたい画像の角の座標(右下推奨)
-        
+
         Returns
         -------
         ndarray
@@ -117,8 +117,8 @@ class PosTrim:
         # フレーム総数
         prop_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         prop_fps = cap.get(cv2.CAP_PROP_FPS)
-
-        vtr = cls.DEFAULT_VEC
+        prop_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        prop_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # ループ内用リスト
         score_images = []
@@ -129,11 +129,10 @@ class PosTrim:
         interval_frame = round(interval_sec * prop_fps)
 
         # 楽譜の範囲を指定
-        # pos1, pos2 = (0,0), (1920, 1080)
-        # pos1, pos2 = (0,0), (854, 480)
         # 本来ならforループ内で逐次変更しながらやる想定
-        score_pos = ScorePosition()
-        pos1, pos2 = score_pos.mock_get_pos(video_name)
+        score_pos = ScorePosition.mock_get_pos(video_name)
+        pos1 = score_pos.pos1.resolve(prop_width, prop_height)
+        pos2 = score_pos.pos2.resolve(prop_width, prop_height)
         print("check:", video_name, pos1, pos2)
         
         # pos1, pos2 = score_pos.mock_takane()
