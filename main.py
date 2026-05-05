@@ -37,30 +37,19 @@ def mock_save_frame(score_images: list, folder_path: str, pic_name: str = "tmp_f
     """
     file_path = os.path.join(folder_path, f"{pic_name}_loc_score.jpg")
     is_succeed_to_save_file = cv2.imwrite(file_path, score_images[0])
-            
-    # 失敗した場合のメッセージ表示
+
     if not is_succeed_to_save_file:
         print("Failed to save image file.")
         return
-            
+
     print("Succeed to save image file.")
 
 def main():
     """動画から楽譜画像をトリミングして保存するメイン処理"""
-    # 画像の読み込み
-    # video_name = "video"
-    # video_name = ".test_何故か着地が下手くそなアホウドリ"
     video_name = "ギターと孤独と蒼い惑星／吉他與孤獨的藍色星球│DRUM COVER"
-
-    # path_to_video = f'./videos/{video_name}.mp4'
     path_to_video = os.path.join(VIDEO_FOLDER_PATH, video_name+".mp4")
-
-    # folder_name = "tmp"
     new_score_folder_name = "tmp_kodoku"
-
-    path_to_save_score = os.path.join(SCORE_FOLDER_PATH, new_score_folder_name)  
-
-    # pic_name = "tmp_frame"
+    path_to_save_score = os.path.join(SCORE_FOLDER_PATH, new_score_folder_name)
     pic_name = "tmp_kodoku"
 
     video = cv2.VideoCapture(path_to_video)
@@ -68,14 +57,9 @@ def main():
     if not video.isOpened():
         print("video is not opend in main.py")
         sys.exit()
-    
-    # # 本来の処理
+
     trimmed_socres = pt.trim_video(video, video_name)
     pt.save_image_files(trimmed_socres, path_to_save_score, pic_name)
-        
-    # 手動でトリミング用座標を確認する際に使用
-    # ret = mock_get_frame(video)
-    # mock_save_frame(ret,SCORE_FOLDER_PATH,pic_name)
 
 if __name__ == "__main__":
     main()

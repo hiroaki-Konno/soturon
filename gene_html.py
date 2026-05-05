@@ -43,8 +43,7 @@ BASE_HTML = '''<html>
 '''
 
 
-# def gene_html(song_folder_name, song_name):
-def gene_html(song_folder_name : str = "test_ahodri2", song_name : str = "曲名：テスト、アホウドリ"):
+def gene_html(song_folder_name, song_name):
     """曲の楽譜のフォルダ名と曲名から楽譜のhtmlを生成する
     
     Parameters
@@ -56,7 +55,6 @@ def gene_html(song_folder_name : str = "test_ahodri2", song_name : str = "曲名
     """
     # 楽譜画像のパスを生成
     song_dir_path = os.path.join(PIC_DIR_PATH, song_folder_name)
-    # print(os.listdir(song_dir_path))
 
     # body1の生成
     body1 = ""
@@ -64,7 +62,6 @@ def gene_html(song_folder_name : str = "test_ahodri2", song_name : str = "曲名
         body1 += """<img src="{}">\n\t""".format(os.path.join(song_dir_path, img))
     
     body1 = body1[:-2]
-    # print(body1)
 
     kw_dict = {
         "title1" : song_name,
