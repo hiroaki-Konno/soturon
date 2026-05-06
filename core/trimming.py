@@ -3,7 +3,6 @@ import imgsim
 import os
 import shutil
 
-from core.score_pos import ScorePosition
 from settings import DEFAULT_INTERVAL_SEC
 
 class PosTrim:
@@ -72,28 +71,25 @@ class PosTrim:
         return score_images, score_vecs
 
     @classmethod
-    def trim_video(cls, cap, video_name):
-        """ 動画のトリミングを行う
-        動画内で楽譜位置が変更される場合はここで調整
-        画像の重複チェック、インターバルの調整もここに含む
+    def trim_video(cls, cap, pos1: tuple, pos2: tuple):
+        """動画のトリミングを行う
 
         Parameters
         ----------
         cap: cv2.VideoCapture
-            画質が1920*1080のcv2で読み込まれた動画
-        video_name: str
-            動画の名称、本来なら消したい
-            手動で特定した座標をまとめた辞書へのアクセス用
+            cv2で読み込まれた動画
+        pos1 : tuple[int, int]
+            楽譜領域の左上ピクセル座標 (x, y)
+        pos2 : tuple[int, int]
+            楽譜領域の右下ピクセル座標 (x, y)
 
         Returns
         -------
         list(ndarray):
-            トリミングされた楽譜画像のリストを返す
+            トリミングされた楽譜画像のリスト
         """
         prop_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         prop_fps = cap.get(cv2.CAP_PROP_FPS)
-        prop_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        prop_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         score_images = []
         score_vecs = []
@@ -101,12 +97,6 @@ class PosTrim:
         current_frame = 0
         interval_sec = cls.DEFAULT_INTERVAL_SEC
         interval_frame = round(interval_sec * prop_fps)
-
-        # 本来ならforループ内で逐次変更しながらやる想定
-        score_pos = ScorePosition.mock_get_pos(video_name)
-        pos1 = score_pos.pos1.resolve(prop_width, prop_height)
-        pos2 = score_pos.pos2.resolve(prop_width, prop_height)
-        print("check:", video_name, pos1, pos2)
 
         for specified_frame_count in range(interval_frame, prop_frame_count+interval_frame, interval_frame):
             cap.set(cv2.CAP_PROP_POS_FRAMES, specified_frame_count)
@@ -139,15 +129,16 @@ class PosTrim:
             shutil.rmtree(folder_path)
         os.makedirs(folder_path, exist_ok=True)
 
-        # 画像をリストから保存
+        # cv2.imwrite は非ASCIIパスを扱えないため imencode + open で保存
         for i, score_image in enumerate(score_images):
             file_path = os.path.join(folder_path, f"{pic_name}{i+1:03}.jpg")
-            is_succeed_to_save_file = cv2.imwrite(file_path, score_image)
-
-            if not is_succeed_to_save_file:
-                print("Failed to save image file.")
+            ret, buf = cv2.imencode('.jpg', score_image)
+            if not ret:
+                print(f"Failed to encode image: {file_path}")
                 break
-        print("Succeed to save image file.")
+            with open(file_path, 'wb') as f:
+                f.write(buf.tobytes())
+        print("Succeed to save image files.")
 
     def improve_interval():
         """トリミングのインターバル（フレーム間隔）を動的に調整する（未実装）"""
