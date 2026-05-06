@@ -35,6 +35,10 @@ function handleEvent(ev) {
       spinner.classList.add('active');
       break;
 
+    case 'comparison_progress':
+      statusText.textContent = `類似度を計算中... ${ev.current}/${ev.total}`;
+      break;
+
     case 'frame_classified':
       classifyFrame(ev.index, ev.is_peak, ev.distance);
       break;
@@ -87,7 +91,16 @@ function classifyFrame(index, isPeak, distance) {
   frames[index].distance = distance;
 
   const item = document.getElementById(`thumb-${index}`);
-  if (!isPeak) item.classList.add('non-peak');
+  if (!isPeak) {
+    item.classList.add('non-peak');
+  } else {
+    // ピーク画像を自動選択
+    item.classList.add('peak');
+    selected.add(index);
+    item.classList.add('selected');
+  }
+
+  selectionCount.textContent = `${selected.size} 枚選択中`;
 
   if (index === currentIdx) updateDetail();
 }

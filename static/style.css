@@ -130,7 +130,7 @@ canvas {
 
 /* グリッドパネル */
 .grid-panel {
-  width: 330px;
+  width: 350px;
   flex-shrink: 0;
   overflow-y: auto;
   padding: 10px;
@@ -164,12 +164,25 @@ canvas {
 /* ピーク以外はグレーアウト */
 .thumb-item.non-peak img {
   filter: grayscale(100%);
-  opacity: 0.35;
+  opacity: 0.4;
 }
-/* 選択中 */
+/* 選択中は緑枠 */
 .thumb-item.selected { border-color: #4caf50; }
-/* フォーカス中 */
-.thumb-item.active  { border-color: #4a9eff; }
+/* 選択中のチェックマーク */
+.thumb-item.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  font-size: 2rem;
+  color: #fff;
+  text-shadow: 0 0 6px rgba(0,0,0,1), 0 0 3px rgba(0,0,0,1);
+  pointer-events: none;
+  line-height: 1;
+}
+/* フォーカス中は青枠 */
+.thumb-item.active { border-color: #4a9eff; }
 /* 選択 + フォーカス */
 .thumb-item.selected.active { border-color: #ffeb3b; }
 

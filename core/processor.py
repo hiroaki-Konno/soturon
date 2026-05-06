@@ -1,4 +1,5 @@
 import os
+import queue
 import threading
 import time
 
@@ -28,6 +29,7 @@ class Processor:
     def _job_reset(self):
         """処理ジョブの状態のみリセットする。load() の結果（パス・スケール）は保持する。"""
         self._events: list[dict] = []
+        self._queue: queue.Queue = queue.Queue()
         self._done = False
         self._frame_paths: list[str] = []
 
@@ -109,22 +111,27 @@ class Processor:
         return folder
 
     def event_stream(self):
-        """SSE 用ジェネレータ。過去イベントをリプレイしてから新規イベントを流す。"""
-        pos = 0
+        """SSE 用ジェネレータ。過去イベントをリプレイしてから新規イベントをリアルタイムで流す。"""
+        with self._lock:
+            past = list(self._events)
+            done = self._done
+
+        for ev in past:
+            yield ev
+
+        if done:
+            yield {"type": "stream_end"}
+            return
+
         while True:
-            with self._lock:
-                batch = self._events[pos:]
-                pos = len(self._events)
-                done = self._done
-
-            for ev in batch:
+            try:
+                ev = self._queue.get(timeout=0.5)
                 yield ev
-
-            if done:
-                yield {"type": "stream_end"}
-                break
-
-            time.sleep(0.1)
+            except queue.Empty:
+                with self._lock:
+                    if self._done and self._queue.empty():
+                        yield {"type": "stream_end"}
+                        break
 
     # ------------------------------------------------------------------
     # 内部処理
@@ -133,6 +140,7 @@ class Processor:
     def _emit(self, event: dict) -> None:
         with self._lock:
             self._events.append(event)
+        self._queue.put(event)
 
     def _run(self, pos1: tuple, pos2: tuple) -> None:
         try:
@@ -176,6 +184,7 @@ class Processor:
 
             vecs = []
             distances: list = [None]
+            total = len(raw_frames)
 
             for i, f in enumerate(raw_frames):
                 vec = _VEC.vectorize(f)
@@ -184,6 +193,7 @@ class Processor:
                     dist = imgsim.distance(vecs[i - 1], vec)
                     distances.append(dist)
                     logger.debug(f"類似度 [{i}]: {dist:.4f}")
+                self._emit({"type": "comparison_progress", "current": i + 1, "total": total})
 
             is_peaks = self._compute_peaks(len(raw_frames), distances)
 
