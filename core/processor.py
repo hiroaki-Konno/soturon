@@ -112,15 +112,16 @@ class Processor:
         self.last_save_folder = folder
         return folder
 
-    def generate_html(self, folder: str) -> str:
+    def generate_html(self, folder: str, title: str = None, lyrics: dict = None) -> str:
         """folder 内の画像から HTML を生成・保存し、HTMLファイルの絶対パスを返す"""
         from core.html_generator import HtmlGenerator
+        title = title or self.title
         images = sorted(
             f for f in os.listdir(folder)
             if f.lower().endswith((".jpg", ".jpeg", ".png"))
         )
-        gen = HtmlGenerator(title=self.title, image_paths=images)
-        return gen.save(os.path.join(folder, f"{self.title}.html"))
+        gen = HtmlGenerator(title=title, image_paths=images, lyrics=lyrics or {})
+        return gen.save(os.path.join(folder, f"{title}.html"))
 
     def event_stream(self):
         """SSE 用ジェネレータ。過去イベントをリプレイしてから新規イベントをリアルタイムで流す。"""

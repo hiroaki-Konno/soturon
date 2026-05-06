@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask, Response, jsonify, render_template, request, send_file
+from flask import Flask, Response, jsonify, redirect, render_template, request, send_file
 from flask import stream_with_context
 from loguru import logger
 
@@ -74,8 +74,38 @@ def api_frame(index):
 def api_save():
     selected = (request.json or {}).get("selected", [])
     folder = _processor.save_selected(selected)
-    html_path = _processor.generate_html(folder)
-    return jsonify({"ok": True, "folder": folder, "html": html_path})
+    return jsonify({"ok": True, "folder": folder})
+
+
+@app.route("/edit")
+def edit():
+    folder = _processor.last_save_folder
+    if not folder:
+        return redirect("/")
+    images = sorted(
+        f for f in os.listdir(folder)
+        if f.lower().endswith((".jpg", ".jpeg", ".png"))
+    )
+    return render_template("edit.html", title=_processor.title, images=images)
+
+
+@app.route("/api/saved_image/<path:filename>")
+def api_saved_image(filename):
+    folder = _processor.last_save_folder
+    return send_file(os.path.abspath(os.path.join(folder, filename)), mimetype="image/jpeg")
+
+
+@app.route("/api/generate", methods=["POST"])
+def api_generate():
+    data = request.json or {}
+    title = data.get("title", _processor.title)
+    memos = data.get("memos", {})
+    folder = _processor.last_save_folder
+    if not folder:
+        return jsonify({"error": "先に保存してください"}), 400
+    lyrics = {int(k): v for k, v in memos.items() if v.strip()}
+    html_path = _processor.generate_html(folder, title=title, lyrics=lyrics)
+    return jsonify({"ok": True, "html": html_path})
 
 
 @app.route("/api/open_html")
@@ -83,9 +113,8 @@ def api_open_html():
     folder = _processor.last_save_folder
     if not folder:
         return jsonify({"error": "先に保存してください"}), 400
-    html_path = os.path.abspath(
-        os.path.join(folder, f"{_processor.title}.html")
-    )
+    title = _processor.title
+    html_path = os.path.abspath(os.path.join(folder, f"{title}.html"))
     if not os.path.isfile(html_path):
         return jsonify({"error": "HTMLファイルが見つかりません"}), 404
     os.startfile(html_path)

@@ -164,16 +164,15 @@ function saveSelected() {
     statusText.textContent = '保存するフレームが選択されていません';
     return;
   }
+  saveBtn.disabled = true;
+  statusText.textContent = '保存中...';
   fetch('/api/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ selected: [...selected] }),
   })
     .then(r => r.json())
-    .then(data => {
-      statusText.textContent = `保存完了: ${data.folder}  /  HTML: ${data.html}`;
-      pdfBtn.disabled = false;
-    });
+    .then(() => { window.location.href = '/edit'; });
 }
 
 // 保存済み HTML をブラウザで開く（印刷→PDF保存 用）

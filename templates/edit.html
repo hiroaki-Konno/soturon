@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>メモ編集</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="edit-layout">
+
+    <header class="top-bar">
+      <label class="edit-title-label">タイトル
+        <input id="title-input" type="text" value="{{ title }}">
+      </label>
+      <div id="status-text" class="status-text"></div>
+      <button id="generate-btn" onclick="generate()">HTML生成</button>
+      <button id="open-btn" onclick="openHtml()" disabled>HTMLを開く</button>
+    </header>
+
+    <div class="edit-list" id="edit-list">
+      {% for img in images %}
+      <div class="edit-row">
+        <img class="edit-thumb" src="/api/saved_image/{{ img }}" alt="{{ loop.index }}">
+        <textarea
+          class="edit-memo"
+          data-index="{{ loop.index0 }}"
+          placeholder="歌詞・メモ（任意）"
+        ></textarea>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+  <script src="/static/edit.js"></script>
+</body>
+</html>
