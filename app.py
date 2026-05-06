@@ -74,4 +74,19 @@ def api_frame(index):
 def api_save():
     selected = (request.json or {}).get("selected", [])
     folder = _processor.save_selected(selected)
-    return jsonify({"ok": True, "folder": folder})
+    html_path = _processor.generate_html(folder)
+    return jsonify({"ok": True, "folder": folder, "html": html_path})
+
+
+@app.route("/api/open_html")
+def api_open_html():
+    folder = _processor.last_save_folder
+    if not folder:
+        return jsonify({"error": "先に保存してください"}), 400
+    html_path = os.path.abspath(
+        os.path.join(folder, f"{_processor.title}.html")
+    )
+    if not os.path.isfile(html_path):
+        return jsonify({"error": "HTMLファイルが見つかりません"}), 404
+    os.startfile(html_path)
+    return jsonify({"ok": True})

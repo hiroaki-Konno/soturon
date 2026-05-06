@@ -32,6 +32,7 @@ class Processor:
         self._queue: queue.Queue = queue.Queue()
         self._done = False
         self._frame_paths: list[str] = []
+        self.last_save_folder: str = ""
 
     # ------------------------------------------------------------------
     # 公開メソッド
@@ -108,7 +109,18 @@ class Processor:
             if frame is not None:
                 frames.append(frame)
         PosTrim.save_image_files(frames, folder, self.title)
+        self.last_save_folder = folder
         return folder
+
+    def generate_html(self, folder: str) -> str:
+        """folder 内の画像から HTML を生成・保存し、HTMLファイルの絶対パスを返す"""
+        from core.html_generator import HtmlGenerator
+        images = sorted(
+            f for f in os.listdir(folder)
+            if f.lower().endswith((".jpg", ".jpeg", ".png"))
+        )
+        gen = HtmlGenerator(title=self.title, image_paths=images)
+        return gen.save(os.path.join(folder, f"{self.title}.html"))
 
     def event_stream(self):
         """SSE 用ジェネレータ。過去イベントをリプレイしてから新規イベントをリアルタイムで流す。"""

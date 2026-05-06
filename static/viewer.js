@@ -14,6 +14,7 @@ const selectionCount = document.getElementById('selection-count');
 const statusText    = document.getElementById('status-text');
 const spinner       = document.getElementById('spinner');
 const saveBtn       = document.getElementById('save-btn');
+const pdfBtn        = document.getElementById('pdf-btn');
 
 // SSE 接続
 const es = new EventSource('/api/events');
@@ -48,6 +49,7 @@ function handleEvent(ev) {
       statusText.textContent = '処理完了';
       saveBtn.disabled = false;
       break;
+
 
     case 'error':
       spinner.classList.remove('active');
@@ -168,7 +170,22 @@ function saveSelected() {
     body: JSON.stringify({ selected: [...selected] }),
   })
     .then(r => r.json())
-    .then(data => { statusText.textContent = `保存完了: ${data.folder}`; });
+    .then(data => {
+      statusText.textContent = `保存完了: ${data.folder}  /  HTML: ${data.html}`;
+      pdfBtn.disabled = false;
+    });
+}
+
+// 保存済み HTML をブラウザで開く（印刷→PDF保存 用）
+async function openHtml() {
+  try {
+    const r = await fetch('/api/open_html');
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error);
+    statusText.textContent = 'HTMLを開きました — 印刷 (Ctrl+P) からPDF保存できます';
+  } catch (e) {
+    statusText.textContent = `エラー: ${e.message}`;
+  }
 }
 
 // キーボード操作

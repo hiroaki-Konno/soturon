@@ -1,75 +1,116 @@
 import os
-from settings import PIC_DIR_PATH
+import pathlib
+import zipfile
 
-def write1( file1, str1 ):
-    """文字列をUTF-8エンコードでファイルに書き込む
-
-    Parameters
-    ----------
-    file1: str
-        書き込み先のファイルパス
-    str1: str
-        書き込む文字列
-    """
-    with open( file1, 'w', encoding='utf-8' ) as f1:
-        f1.write( str1 )
-    return 0
-
-
-BASE_HTML = '''<html>
-    <head>
-        <style>
-            img {{
-                width:100%;
-                /* border:3px solid blue;  */
-                vertical-align:top;
-            }}
-            body {{
-                margin:0;
-            }}
-            h1 {{
-                margin-left: 25px;
-                font-size: 40px;
-            }}
-        </style>
-        <meta charset="utf-8">
-        <title>{title1}</title>
-    </head>
-    <body>
-        <h1>{title1}</h1>
-        {body1}
-    </body>
+_BASE_HTML = """\
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{title}</title>
+  <style>
+    body {{ margin: 0; font-family: sans-serif; }}
+    h1 {{ margin: 16px 0 16px 24px; font-size: 2rem; }}
+    .score-img {{ width: 100%; vertical-align: top; display: block; }}
+    .lyric {{ margin: 8px 24px; font-size: 1rem; color: #333; white-space: pre-wrap; }}
+  </style>
+</head>
+<body>
+  <h1>{title}</h1>
+{body}
+</body>
 </html>
-'''
+"""
 
 
-def gene_html(song_folder_name, song_name):
-    """曲の楽譜のフォルダ名と曲名から楽譜のhtmlを生成する
+class HtmlGenerator:
+    def __init__(self, title: str, image_paths: list, lyrics: dict = None):
+        """
+        Parameters
+        ----------
+        title : str
+            楽譜タイトル
+        image_paths : list[str]
+            img src に使うパス（HTMLから見た相対パスを推奨）
+        lyrics : dict[int, str], optional
+            {画像インデックス: テキスト} — 対応画像の直後に <p> を挿入
+        """
+        self.title = title
+        self.image_paths = image_paths
+        self.lyrics = lyrics or {}
 
-    Parameters
-    ----------
-    song_folder_name: str
-        曲の楽譜画像が格納されているフォルダ名
-    song_name: str
-        生成する楽譜の曲名、html内のタイトルなどに使用
-    """
-    song_dir_path = os.path.join(PIC_DIR_PATH, song_folder_name)
+    def build(self) -> str:
+        """HTML文字列を生成して返す"""
+        lines = []
+        for i, path in enumerate(self.image_paths):
+            lines.append(f'  <img class="score-img" src="{path}" alt="{i + 1}">')
+            if i in self.lyrics:
+                text = (self.lyrics[i]
+                        .replace("&", "&amp;")
+                        .replace("<", "&lt;")
+                        .replace(">", "&gt;"))
+                lines.append(f'  <p class="lyric">{text}</p>')
+        return _BASE_HTML.format(title=self.title, body="\n".join(lines))
 
-    body1 = ""
-    for img in os.listdir(song_dir_path):
-        body1 += """<img src="{}">\n\t""".format(os.path.join(song_dir_path, img))
+    def save(self, output_path: str) -> str:
+        """HTMLを output_path に保存し、絶対パスを返す"""
+        parent = os.path.dirname(output_path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(self.build())
+        return os.path.abspath(output_path)
 
-    body1 = body1[:-2]
+    def to_pdf(self, output_path: str, image_dir: str = None) -> str:
+        """HTMLをPDFに変換して output_path に保存し、絶対パスを返す
 
-    kw_dict = {
-        "title1" : song_name,
-        "body1" : body1
-    }
+        Parameters
+        ----------
+        output_path : str
+            生成する PDF ファイルのパス
+        image_dir : str, optional
+            画像の相対パスを解決するフォルダ（省略時は output_path と同じフォルダ）
+        """
+        from weasyprint import CSS, HTML
 
-    ret_html = BASE_HTML.format(**kw_dict)
+        base_dir = image_dir or os.path.dirname(os.path.abspath(output_path))
+        base_url = pathlib.Path(base_dir).as_uri() + "/"
 
-    print(ret_html)
+        # ページ設定: A4縦、マージンなし、各画像を1ページに収める
+        pdf_css = CSS(string="""
+            @page { size: A4; margin: 0; }
+            .score-img { width: 100%; height: auto; page-break-after: always; }
+            .score-img:last-of-type { page-break-after: auto; }
+            h1 { page-break-after: avoid; margin: 8px 0 4px 12px; font-size: 1.2rem; }
+        """)
 
-    path1 = os.path.dirname(__file__) + "/"
-    file1 = path1 + "html1.html"
-    write1(file1, ret_html)
+        parent = os.path.dirname(output_path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+
+        HTML(string=self.build(), base_url=base_url).write_pdf(
+            output_path, stylesheets=[pdf_css]
+        )
+        return os.path.abspath(output_path)
+
+    def to_zip(self, image_dir: str, output_path: str) -> str:
+        """HTMLと image_dir 内の画像を ZIP 化して保存し、絶対パスを返す
+
+        Parameters
+        ----------
+        image_dir : str
+            ZIP に含める画像が格納されているフォルダ
+        output_path : str
+            生成する ZIP ファイルのパス
+        """
+        html_content = self.build()
+        html_filename = f"{self.title}.html"
+
+        with zipfile.ZipFile(output_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr(html_filename, html_content.encode("utf-8"))
+            for img_path in self.image_paths:
+                full = os.path.join(image_dir, img_path) if not os.path.isabs(img_path) else img_path
+                if os.path.isfile(full):
+                    zf.write(full, os.path.basename(img_path))
+
+        return os.path.abspath(output_path)
