@@ -1,7 +1,9 @@
 import cv2
 import os
 import sys
+from loguru import logger
 
+from core.logger import setup_logger
 from core.downloader import download
 from core.trimming import PosTrim as pt
 from ui.region_selector import select_region
@@ -9,8 +11,10 @@ from settings import SCORE_FOLDER_PATH
 
 
 def main():
+    setup_logger()
+
     if len(sys.argv) < 2:
-        print("使い方: python run.py <YouTube_URL or 動画ファイルパス>")
+        logger.error("使い方: python run.py <YouTube_URL or 動画ファイルパス>")
         sys.exit(1)
 
     arg = sys.argv[1]
@@ -18,20 +22,18 @@ def main():
     if os.path.isfile(arg):
         filepath = arg
         title = os.path.splitext(os.path.basename(filepath))[0]
-        print(f"ファイルを使用: {filepath}")
+        logger.info(f"ファイルを使用: {filepath}")
     else:
-        print("動画をダウンロード中...")
         filepath, title = download(arg)
-        print(f"ダウンロード完了: {filepath}")
 
     video = cv2.VideoCapture(filepath)
     if not video.isOpened():
-        print("動画を開けませんでした")
+        logger.error(f"動画を開けませんでした: {filepath}")
         sys.exit(1)
 
-    print("楽譜の範囲をウィンドウで選択してください")
+    logger.info("楽譜の範囲をウィンドウで選択してください")
     pos1, pos2 = select_region(video)
-    print(f"選択した座標: pos1={pos1}, pos2={pos2}")
+    logger.info(f"選択した座標: pos1={pos1}, pos2={pos2}")
 
     trimmed_scores = pt.trim_video(video, pos1, pos2)
     video.release()

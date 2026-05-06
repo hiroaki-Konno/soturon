@@ -2,6 +2,7 @@ import cv2
 import imgsim
 import os
 import shutil
+from loguru import logger
 
 from settings import DEFAULT_INTERVAL_SEC
 
@@ -63,7 +64,7 @@ class PosTrim:
         before_score_vec = score_vecs[-1]
         trimmed_score_vec = vtr.vectorize(trimmed_score)
         dist = imgsim.distance(before_score_vec, trimmed_score_vec)
-        print(dist)
+        logger.debug(f"画像類似度: {dist:.4f}")
 
         # if distに条件をつける
         score_images.append(trimmed_score)
@@ -134,11 +135,11 @@ class PosTrim:
             file_path = os.path.join(folder_path, f"{pic_name}{i+1:03}.jpg")
             ret, buf = cv2.imencode('.jpg', score_image)
             if not ret:
-                print(f"Failed to encode image: {file_path}")
+                logger.error(f"画像エンコード失敗: {file_path}")
                 break
             with open(file_path, 'wb') as f:
                 f.write(buf.tobytes())
-        print("Succeed to save image files.")
+        logger.info(f"{len(score_images)} 枚の楽譜画像を保存しました: {folder_path}")
 
     def improve_interval():
         """トリミングのインターバル（フレーム間隔）を動的に調整する（未実装）"""
