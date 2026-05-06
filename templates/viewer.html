@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>フレーム選択</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="viewer-layout">
+
+    <!-- ヘッダー -->
+    <header class="top-bar">
+      <div id="status-text" class="status-text">処理中...</div>
+      <div id="spinner" class="spinner"></div>
+      <div id="selection-count" class="selection-count">0 枚選択中</div>
+      <button id="save-btn" onclick="saveSelected()" disabled>保存</button>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <div class="main-content">
+
+      <!-- 左: サムネイルグリッド -->
+      <div class="grid-panel">
+        <div class="grid" id="grid"></div>
+      </div>
+
+      <!-- 右: 詳細表示 -->
+      <div class="detail-panel">
+        <div id="detail-img-wrapper">
+          <img id="detail-img" src="" alt="">
+        </div>
+        <div id="detail-info">
+          <div id="frame-label" class="detail-row"></div>
+          <div id="peak-label"  class="detail-row"></div>
+          <div id="dist-label"  class="detail-row"></div>
+          <button id="toggle-btn" onclick="toggleSelection()">選択に追加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="keys-hint">
+    ← → : ナビゲーション &nbsp;|&nbsp;
+    Space : 選択切替 &nbsp;|&nbsp;
+    S : 保存
+  </div>
+
+  <script src="/static/viewer.js"></script>
+</body>
+</html>

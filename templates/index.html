@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ドラム楽譜抽出</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>ドラム楽譜抽出</h1>
+
+    <section id="input-section">
+      <div class="input-row">
+        <input type="text" id="source-input"
+               placeholder="YouTube URL またはファイルパス">
+        <button id="load-btn" onclick="loadSource()">読み込む</button>
+      </div>
+      <div id="load-status" class="status-msg"></div>
+    </section>
+
+    <section id="roi-section" style="display:none">
+      <p class="section-label">楽譜の範囲をドラッグで選択してください</p>
+      <div class="canvas-wrapper">
+        <canvas id="preview-canvas"></canvas>
+      </div>
+      <div id="roi-info" class="roi-info">範囲未選択</div>
+      <button id="start-btn" disabled onclick="startProcessing()">
+        抽出を開始
+      </button>
+    </section>
+  </div>
+
+  <script src="/static/index.js"></script>
+</body>
+</html>
