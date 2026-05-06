@@ -1,11 +1,14 @@
+import html as _html
 import json
 import os
+import re
 
 from flask import Flask, Response, jsonify, redirect, render_template, request, send_file
 from flask import stream_with_context
 from loguru import logger
 
 from core.processor import Processor
+from settings import SCORE_FOLDER_PATH
 
 app = Flask(__name__)
 _processor = Processor()
@@ -77,16 +80,51 @@ def api_save():
     return jsonify({"ok": True, "folder": folder})
 
 
+def _load_lyrics_from_html(folder: str, title: str) -> dict:
+    """既存HTMLから lyrics dict {0-indexed: text} を復元する"""
+    html_path = os.path.join(folder, f"{title}.html")
+    if not os.path.isfile(html_path):
+        return {}
+    with open(html_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    lyrics = {}
+    pattern = re.compile(
+        r'<img class="score-img"[^>]*?alt="(\d+)"[^>]*>\s*<p class="lyric">(.*?)</p>',
+        re.DOTALL,
+    )
+    for m in pattern.finditer(content):
+        idx = int(m.group(1)) - 1
+        lyrics[idx] = _html.unescape(m.group(2))
+    return lyrics
+
+
+@app.route("/api/score_folders")
+def api_score_folders():
+    if not os.path.isdir(SCORE_FOLDER_PATH):
+        return jsonify({"folders": []})
+    folders = []
+    for name in sorted(os.listdir(SCORE_FOLDER_PATH), reverse=True):
+        path = os.path.join(SCORE_FOLDER_PATH, name)
+        if os.path.isdir(path) and os.path.isfile(os.path.join(path, f"{name}.html")):
+            folders.append({"name": name, "folder": path})
+    return jsonify({"folders": folders})
+
+
 @app.route("/edit")
 def edit():
-    folder = _processor.last_save_folder
+    folder = request.args.get("folder") or _processor.last_save_folder
     if not folder:
         return redirect("/")
+    if request.args.get("folder"):
+        _processor.last_save_folder = folder
+        _processor.title = os.path.basename(folder)
+    title = _processor.title
     images = sorted(
         f for f in os.listdir(folder)
         if f.lower().endswith((".jpg", ".jpeg", ".png"))
     )
-    return render_template("edit.html", title=_processor.title, images=images)
+    lyrics = _load_lyrics_from_html(folder, title)
+    return render_template("edit.html", title=title, images=images, lyrics=lyrics)
 
 
 @app.route("/api/saved_image/<path:filename>")

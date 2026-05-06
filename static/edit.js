@@ -3,6 +3,13 @@
 const statusText  = document.getElementById('status-text');
 const generateBtn = document.getElementById('generate-btn');
 const openBtn     = document.getElementById('open-btn');
+const slider      = document.getElementById('thumb-slider');
+const sizeLabel   = document.getElementById('thumb-size-label');
+
+slider.addEventListener('input', () => {
+  document.documentElement.style.setProperty('--thumb-w', `${slider.value}px`);
+  sizeLabel.textContent = `${slider.value}px`;
+});
 
 async function generate() {
   const title = document.getElementById('title-input').value.trim();

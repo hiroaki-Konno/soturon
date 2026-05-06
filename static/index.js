@@ -1,5 +1,24 @@
 'use strict';
 
+window.addEventListener('DOMContentLoaded', loadScoreFolders);
+
+function loadScoreFolders() {
+  fetch('/api/score_folders')
+    .then(r => r.json())
+    .then(data => {
+      const list = document.getElementById('score-list');
+      if (data.folders.length === 0) {
+        list.innerHTML = '<li class="score-list-empty">保存済みの楽譜はありません</li>';
+        return;
+      }
+      list.innerHTML = data.folders.map(f =>
+        `<li class="score-list-item">
+          <a class="score-list-link" href="/edit?folder=${encodeURIComponent(f.folder)}">${f.name}</a>
+        </li>`
+      ).join('');
+    });
+}
+
 let _previewScale = 1;
 let _roi = null;
 let _drawing = false;

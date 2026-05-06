@@ -12,6 +12,11 @@
       <label class="edit-title-label">タイトル
         <input id="title-input" type="text" value="{{ title }}">
       </label>
+      <label class="slider-label">
+        サムネイル幅
+        <input id="thumb-slider" type="range" min="160" max="520" value="320" step="20">
+        <span id="thumb-size-label">320px</span>
+      </label>
       <div id="status-text" class="status-text"></div>
       <button id="generate-btn" onclick="generate()">HTML生成</button>
       <button id="open-btn" onclick="openHtml()" disabled>HTMLを開く</button>
@@ -25,7 +30,7 @@
           class="edit-memo"
           data-index="{{ loop.index0 }}"
           placeholder="歌詞・メモ（任意）"
-        ></textarea>
+        >{{ lyrics.get(loop.index0, '') }}</textarea>
       </div>
       {% endfor %}
     </div>
