@@ -13,3 +13,5 @@ RECOG_SCORE_IMG     = _config['score_images']['recog_score_img']
 RECOG_SCORE2_IMG    = _config['score_images']['recog_score2_img']
 
 DEFAULT_INTERVAL_SEC = _config.getint('processing', 'default_interval_sec')
+
+FFMPEG_DIR = _config.get('tools', 'ffmpeg_dir', fallback='')
