@@ -34,50 +34,12 @@ class PosTrim:
         return frame[y1:y2, x1:x2]
 
     @classmethod
-    def compare_image_for_overlap(cls, score_images, score_vecs, trimmed_score):
-        """ トリミングされたフレーム画像が前の楽譜画像と重複していないか比較する
+    def trim_video(cls, cap, pos1: tuple, pos2: tuple) -> tuple[list, list]:
+        """動画をインターバルでトリミングし、全フレームとピーク候補フレームを返す
 
         Parameters
         ----------
-        score_images: list(ndarray)
-            トリミングされた楽譜画像のリスト
-        score_vecs: list(ndarray)
-            score_imagesに格納された楽譜画像をベクトル化したもののリスト
-        trimmed_score: ndarray
-            トリミングされたフレーム画像
-
-        Returns
-        -------
-        score_images: list(ndarray)
-            トリミングされた重複していない楽譜画像のリストを返す
-        score_vecs: list(ndarray)
-            トリミングされた重複していない楽譜画像のをベクトル化したもののリストを返す
-        """
-        vtr = cls.DEFAULT_VEC
-
-        # 最初の一枚はとりあえず追加
-        if len(score_images)==0:
-            score_images.append(trimmed_score)
-            score_vecs.append(vtr.vectorize(trimmed_score))
-            return score_images, score_vecs
-
-        before_score_vec = score_vecs[-1]
-        trimmed_score_vec = vtr.vectorize(trimmed_score)
-        dist = imgsim.distance(before_score_vec, trimmed_score_vec)
-        logger.debug(f"画像類似度: {dist:.4f}")
-
-        # if distに条件をつける
-        score_images.append(trimmed_score)
-        score_vecs.append(trimmed_score_vec)
-        return score_images, score_vecs
-
-    @classmethod
-    def trim_video(cls, cap, pos1: tuple, pos2: tuple):
-        """動画のトリミングを行う
-
-        Parameters
-        ----------
-        cap: cv2.VideoCapture
+        cap : cv2.VideoCapture
             cv2で読み込まれた動画
         pos1 : tuple[int, int]
             楽譜領域の左上ピクセル座標 (x, y)
@@ -86,33 +48,72 @@ class PosTrim:
 
         Returns
         -------
-        list(ndarray):
-            トリミングされた楽譜画像のリスト
+        tuple[list[ndarray], list[ndarray]]
+            (all_frames, peak_frames)
+            all_frames  : インターバルで抽出した全トリミングフレーム
+            peak_frames : 類似度が局所最大（凸）のフレーム（楽譜切替推定）
         """
         prop_frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         prop_fps = cap.get(cv2.CAP_PROP_FPS)
+        interval_frame = round(cls.DEFAULT_INTERVAL_SEC * prop_fps)
+        vtr = cls.DEFAULT_VEC
 
-        score_images = []
-        score_vecs = []
+        all_frames = []
+        distances = [None]  # distances[i]: frames[i] と frames[i-1] の類似度距離
+        prev_vec = None
 
-        current_frame = 0
-        interval_sec = cls.DEFAULT_INTERVAL_SEC
-        interval_frame = round(interval_sec * prop_fps)
+        for frame_pos in range(interval_frame, prop_frame_count + interval_frame, interval_frame):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_pos)
+            ret, frame = cap.read()
+            if not ret or frame is None:
+                continue
 
-        for specified_frame_count in range(interval_frame, prop_frame_count+interval_frame, interval_frame):
-            cap.set(cv2.CAP_PROP_POS_FRAMES, specified_frame_count)
-            _ , frame = cap.retrieve()
+            trimmed = cls.trim_image(frame, pos1, pos2)
+            vec = vtr.vectorize(trimmed)
 
-            trimmed_score = cls.trim_image(frame, pos1, pos2)
+            if prev_vec is not None:
+                dist = imgsim.distance(prev_vec, vec)
+                logger.debug(f"画像類似度: {dist:.4f}")
+                distances.append(dist)
 
-            # 画像の重複に基づく追加などの処理
-            score_images, score_vecs = cls.compare_image_for_overlap(score_images, score_vecs, trimmed_score)
+            all_frames.append(trimmed)
+            prev_vec = vec
 
-            # 動画の尺(フレーム)が終わったら終了
-            if prop_frame_count < current_frame:
-                return score_images
+        peak_frames = cls._extract_peaks(all_frames, distances)
+        logger.info(
+            f"全フレーム: {len(all_frames)} 枚 / ピーク候補: {len(peak_frames)} 枚"
+        )
+        return all_frames, peak_frames
 
-        return score_images
+    @staticmethod
+    def _extract_peaks(frames: list, distances: list) -> list:
+        """距離の局所最大値（凸）に対応するフレームを返す。先頭フレームは常に含む。
+
+        Parameters
+        ----------
+        frames : list[ndarray]
+            トリミングフレームのリスト
+        distances : list[float | None]
+            distances[i] = frames[i] と frames[i-1] の類似度距離（distances[0] は None）
+        """
+        if not frames:
+            return []
+
+        peaks = [frames[0]]
+
+        for i in range(1, len(frames)):
+            d = distances[i]
+            prev_d = distances[i - 1]
+            next_d = distances[i + 1] if i + 1 < len(distances) else None
+
+            if prev_d is not None and d <= prev_d:
+                continue
+            if next_d is not None and d <= next_d:
+                continue
+
+            peaks.append(frames[i])
+
+        return peaks
 
     @staticmethod
     def save_image_files(score_images: list, folder_path: str, pic_name: str = "tmp_frame")-> None:

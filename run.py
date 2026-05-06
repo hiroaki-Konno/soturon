@@ -6,6 +6,7 @@ from loguru import logger
 from core.logger import setup_logger
 from core.downloader import download
 from core.trimming import PosTrim as pt
+from ui.frame_selector import select_frames
 from ui.region_selector import select_region
 from settings import SCORE_FOLDER_PATH
 
@@ -35,11 +36,13 @@ def main():
     pos1, pos2 = select_region(video)
     logger.info(f"選択した座標: pos1={pos1}, pos2={pos2}")
 
-    trimmed_scores = pt.trim_video(video, pos1, pos2)
+    all_frames, peak_frames = pt.trim_video(video, pos1, pos2)
     video.release()
 
+    confirmed = select_frames(peak_frames, all_frames)
+
     score_folder = os.path.join(SCORE_FOLDER_PATH, title)
-    pt.save_image_files(trimmed_scores, score_folder, title)
+    pt.save_image_files(confirmed, score_folder, title)
 
 
 if __name__ == "__main__":
