@@ -9,3 +9,8 @@ dependencies = [
     "torchvision>=0.26.0",
     "yt-dlp>=2026.3.17",
 ]
+
+[dependency-groups]
+dev = [
+    "isort>=8.0.1",
+]

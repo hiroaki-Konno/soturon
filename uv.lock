@@ -92,6 +92,11 @@ dependencies = [
     { name = "yt-dlp" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "isort" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "imgsim", specifier = ">=0.1.2" },
@@ -100,6 +105,9 @@ requires-dist = [
     { name = "torchvision", specifier = ">=0.26.0" },
     { name = "yt-dlp", specifier = ">=2026.3.17" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "isort", specifier = ">=8.0.1" }]
 
 [[package]]
 name = "filelock"
@@ -131,6 +139,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b9/2b/4694e8730f9ee5b9a853ef74e052c1282fc7d541bc497a08040f3a287cf4/imgsim-0.1.2.tar.gz", hash = "sha256:dc8ce041d07f7299d720e3af95ccccb353bed4810b5c4f9c843e86c984702d01", size = 93364380, upload-time = "2021-07-06T09:57:30.821Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e4/68/bcde7a9d944d1de5047ddf3a4ac1fb311b5515367f994974879000ae2362/imgsim-0.1.2-py3-none-any.whl", hash = "sha256:124b5102550c9c59e86f660134327d93a2b6788714468ab91eb3b294e3c7ffab", size = 93364481, upload-time = "2021-07-06T09:54:58.998Z" },
+]
+
+[[package]]
+name = "isort"
+version = "8.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ef/7c/ec4ab396d31b3b395e2e999c8f46dec78c5e29209fac49d1f4dace04041d/isort-8.0.1.tar.gz", hash = "sha256:171ac4ff559cdc060bcfff550bc8404a486fee0caab245679c2abe7cb253c78d", size = 769592, upload-time = "2026-02-28T10:08:20.685Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3e/95/c7c34aa53c16353c56d0b802fba48d5f5caa2cdee7958acbcb795c830416/isort-8.0.1-py3-none-any.whl", hash = "sha256:28b89bc70f751b559aeca209e6120393d43fbe2490de0559662be7a9787e3d75", size = 89733, upload-time = "2026-02-28T10:08:19.466Z" },
 ]
 
 [[package]]
