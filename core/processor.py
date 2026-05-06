@@ -19,15 +19,17 @@ _VEC = imgsim.Vectorizer()
 class Processor:
     def __init__(self):
         self._lock = threading.Lock()
-        self._reset()
+        # load() が設定する値（ジョブをまたいで保持する）
+        self._video_path = ""
+        self._scale = 1.0
+        self.title = ""
+        self._job_reset()
 
-    def _reset(self):
+    def _job_reset(self):
+        """処理ジョブの状態のみリセットする。load() の結果（パス・スケール）は保持する。"""
         self._events: list[dict] = []
         self._done = False
         self._frame_paths: list[str] = []
-        self._scale = 1.0
-        self.title = ""
-        self._video_path = ""
 
     # ------------------------------------------------------------------
     # 公開メソッド
@@ -81,7 +83,7 @@ class Processor:
     def start(self, pos1: tuple, pos2: tuple) -> None:
         """バックグラウンドでトリミング + 比較処理を開始する"""
         with self._lock:
-            self._reset()
+            self._job_reset()
 
         # プレビュー座標 → 元動画座標に変換
         s = self._scale
@@ -190,7 +192,7 @@ class Processor:
                     "type": "frame_classified",
                     "index": i,
                     "is_peak": is_peak,
-                    "distance": distances[i],
+                    "distance": float(distances[i]) if distances[i] is not None else None,
                 })
 
             logger.info(

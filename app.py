@@ -3,6 +3,7 @@ import os
 
 from flask import Flask, Response, jsonify, render_template, request, send_file
 from flask import stream_with_context
+from loguru import logger
 
 from core.processor import Processor
 
@@ -49,8 +50,12 @@ def api_start():
 @app.route("/api/events")
 def api_events():
     def generate():
-        for event in _processor.event_stream():
-            yield f"data: {json.dumps(event)}\n\n"
+        try:
+            for event in _processor.event_stream():
+                yield f"data: {json.dumps(event)}\n\n"
+        except Exception as e:
+            logger.error(f"SSE ストリームエラー: {e}")
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
 
     return Response(
         stream_with_context(generate()),
