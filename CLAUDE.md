@@ -45,7 +45,8 @@ drum_score/
 │
 ├── docs/               # 詳細ドキュメント
 │   ├── architecture.md # Processor / SSE イベント / HtmlGenerator
-│   └── config.md       # config.ini の全設定項目
+│   ├── config.md       # config.ini の全設定項目
+│   └── todo.md         # 今後の実装予定・検討事項
 │
 └── tmp/                # 実行時生成（Git 管理外）
     ├── videos/         # ダウンロード動画
@@ -58,3 +59,4 @@ drum_score/
 
 - [アーキテクチャ](docs/architecture.md) — データフロー・Processor・SSE イベント・HtmlGenerator
 - [設定ファイル](docs/config.md) — config.ini の全設定項目
+- [TODO](docs/todo.md) — 今後の実装予定・検討事項
