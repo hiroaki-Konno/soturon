@@ -9,7 +9,7 @@ from loguru import logger
 
 from core.downloader import download
 from core.trimming import PosTrim
-from settings import SCORE_FOLDER_PATH
+from settings import SCORE_FOLDER_PATH, SIMILARITY_THRESHOLD
 
 _PREVIEW_PATH = "./tmp/preview.jpg"
 _FRAMES_DIR = "./tmp/frames"
@@ -208,7 +208,7 @@ class Processor:
                     logger.debug(f"類似度 [{i}]: {dist:.4f}")
                 self._emit({"type": "comparison_progress", "current": i + 1, "total": total})
 
-            is_peaks = self._compute_peaks(len(raw_frames), distances)
+            is_peaks = self._compute_peaks(len(raw_frames), distances, SIMILARITY_THRESHOLD)
 
             for i, is_peak in enumerate(is_peaks):
                 self._emit({
@@ -232,14 +232,16 @@ class Processor:
                 self._done = True
 
     @staticmethod
-    def _compute_peaks(n: int, distances: list) -> list[bool]:
-        """距離リストの局所最大値（凸）を True にしたブールリストを返す"""
+    def _compute_peaks(n: int, distances: list, threshold: float = 0.0) -> list[bool]:
+        """距離リストの局所最大値（凸）かつ threshold 以上のものを True にして返す"""
         if n == 0:
             return []
         result = [False] * n
         result[0] = True
         for i in range(1, n):
             d = distances[i]
+            if d is None or d < threshold:
+                continue
             prev_d = distances[i - 1]
             next_d = distances[i + 1] if i + 1 < len(distances) else None
             if prev_d is not None and d <= prev_d:
