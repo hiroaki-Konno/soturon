@@ -356,6 +356,44 @@ canvas {
   border-color: #4a9eff;
 }
 
+/* プレビューモーダル */
+.preview-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.preview-content {
+  position: relative;
+  width: 90vw;
+  height: 90vh;
+  background: #fff;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  background: #333;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+}
+
+.preview-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+}
+
 /* キーヒント */
 .keys-hint {
   position: fixed;

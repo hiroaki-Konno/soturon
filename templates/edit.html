@@ -18,9 +18,17 @@
         <span id="thumb-size-label">320px</span>
       </label>
       <div id="status-text" class="status-text"></div>
+      <button id="preview-btn" onclick="openPreview()">プレビュー</button>
       <button id="generate-btn" onclick="generate()">HTML生成</button>
       <button id="open-btn" onclick="openHtml()" disabled>HTMLを開く</button>
     </header>
+
+    <div id="preview-modal" class="preview-modal" style="display:none">
+      <div class="preview-content">
+        <button class="preview-close" onclick="closePreview()">✕ 閉じる</button>
+        <iframe id="preview-iframe" class="preview-iframe"></iframe>
+      </div>
+    </div>
 
     <div class="edit-list" id="edit-list">
       {% for img in images %}
