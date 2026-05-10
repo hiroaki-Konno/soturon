@@ -43,13 +43,13 @@ class HtmlGenerator:
         """HTML文字列を生成して返す"""
         lines = []
         for i, path in enumerate(self.image_paths):
-            lines.append(f'  <img class="score-img" src="{path}" alt="{i + 1}">')
             if i in self.lyrics:
                 text = (self.lyrics[i]
                         .replace("&", "&amp;")
                         .replace("<", "&lt;")
                         .replace(">", "&gt;"))
                 lines.append(f'  <p class="lyric">{text}</p>')
+            lines.append(f'  <img class="score-img" src="{path}" alt="{i + 1}">')
         return _BASE_HTML.format(title=self.title, body="\n".join(lines))
 
     def save(self, output_path: str) -> str:
