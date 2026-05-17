@@ -8,6 +8,7 @@ from flask import stream_with_context
 from loguru import logger
 
 from core.processor import Processor
+import settings as _settings
 from settings import SCORE_FOLDER_PATH
 
 app = Flask(__name__)
@@ -156,4 +157,33 @@ def api_open_html():
     if not os.path.isfile(html_path):
         return jsonify({"error": "HTMLファイルが見つかりません"}), 404
     os.startfile(html_path)
+    return jsonify({"ok": True})
+
+
+@app.route("/settings")
+def settings_page():
+    return render_template("settings.html")
+
+
+@app.route("/api/settings", methods=["GET"])
+def api_settings_get():
+    return jsonify({
+        "interval_sec": _settings.DEFAULT_INTERVAL_SEC,
+        "similarity_threshold": _settings.SIMILARITY_THRESHOLD,
+    })
+
+
+@app.route("/api/settings", methods=["POST"])
+def api_settings_post():
+    data = request.json or {}
+    try:
+        interval_sec = int(data["interval_sec"])
+        threshold = float(data["similarity_threshold"])
+    except (KeyError, ValueError) as e:
+        return jsonify({"error": str(e)}), 400
+    if interval_sec < 1:
+        return jsonify({"error": "interval_sec は 1 以上にしてください"}), 400
+    if threshold < 0:
+        return jsonify({"error": "similarity_threshold は 0 以上にしてください"}), 400
+    _settings.save_settings(interval_sec, threshold)
     return jsonify({"ok": True})

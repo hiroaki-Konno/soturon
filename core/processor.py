@@ -9,7 +9,8 @@ from loguru import logger
 
 from core.downloader import download
 from core.trimming import PosTrim
-from settings import SCORE_FOLDER_PATH, SIMILARITY_THRESHOLD
+import settings as _settings
+from settings import SCORE_FOLDER_PATH
 
 _PREVIEW_PATH = "./tmp/preview.jpg"
 _FRAMES_DIR = "./tmp/frames"
@@ -208,7 +209,7 @@ class Processor:
                     logger.debug(f"類似度 [{i}]: {dist:.4f}")
                 self._emit({"type": "comparison_progress", "current": i + 1, "total": total})
 
-            is_peaks = self._compute_peaks(len(raw_frames), distances, SIMILARITY_THRESHOLD)
+            is_peaks = self._compute_peaks(len(raw_frames), distances, _settings.SIMILARITY_THRESHOLD)
 
             for i, is_peak in enumerate(is_peaks):
                 self._emit({

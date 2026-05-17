@@ -19,3 +19,16 @@ FFMPEG_DIR = _config.get('tools', 'ffmpeg_dir', fallback='')
 
 LOG_LEVEL   = _config.get('logging', 'log_level', fallback='INFO')
 LOG_DIR     = _config['logging']['log_dir']
+
+
+def save_settings(interval_sec: int, threshold: float) -> None:
+    """設定値を config.ini に書き込み、モジュール変数を更新する"""
+    global DEFAULT_INTERVAL_SEC, SIMILARITY_THRESHOLD
+    _config['processing']['default_interval_sec'] = str(interval_sec)
+    _config['processing']['similarity_threshold'] = str(threshold)
+    with open(Path(__file__).parent / 'config.ini', 'w', encoding='utf-8') as f:
+        _config.write(f)
+    DEFAULT_INTERVAL_SEC = interval_sec
+    SIMILARITY_THRESHOLD = threshold
+    from core.trimming import PosTrim
+    PosTrim.DEFAULT_INTERVAL_SEC = interval_sec
