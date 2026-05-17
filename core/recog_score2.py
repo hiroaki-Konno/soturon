@@ -2,10 +2,11 @@
 # https://qiita.com/tifa2chan/items/d2b6c476d9f527785414
 # https://note.nkmk.me/python-numpy-opencv-image-binarization/
 
-import numpy
-import cv2
 import os
-import sys
+
+import cv2
+import numpy
+
 from settings import DEBUG_BASE_PATH, RECOG_SCORE2_IMG
 
 DS = os.sep

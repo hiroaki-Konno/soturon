@@ -1,7 +1,9 @@
 import os
+
 import yt_dlp
 from loguru import logger
-from settings import VIDEO_FOLDER_PATH, FFMPEG_DIR
+
+from settings import FFMPEG_DIR, VIDEO_FOLDER_PATH
 
 
 def download(url: str) -> tuple:

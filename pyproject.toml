@@ -15,10 +15,22 @@ dependencies = [
 dev = [
     "isort>=8.0.1",
     "playwright>=1.59.0",
+    "pre-commit>=4.6.0",
     "pytest>=9.0.3",
     "pytest-playwright>=0.7.2",
+    "ruff>=0.15.13",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]  # pycodestyle, pyflakes, isort
+ignore = ["E501"]          # 日本語コメントが多いため行長制限は除外
+
+[tool.isort]
+profile = "black"

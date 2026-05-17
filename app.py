@@ -3,12 +3,20 @@ import json
 import os
 import re
 
-from flask import Flask, Response, jsonify, redirect, render_template, request, send_file
-from flask import stream_with_context
+from flask import (
+    Flask,
+    Response,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    stream_with_context,
+)
 from loguru import logger
 
-from core.processor import Processor
 import settings as _settings
+from core.processor import Processor
 from settings import SCORE_FOLDER_PATH
 
 app = Flask(__name__)
