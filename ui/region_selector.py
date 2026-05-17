@@ -1,8 +1,8 @@
 import contextlib
 import os
+
 import cv2
 from loguru import logger
-
 
 _MAX_DISPLAY_WIDTH = 1280
 

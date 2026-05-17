@@ -1,15 +1,14 @@
 import os
 import queue
 import threading
-import time
 
 import cv2
 import imgsim
 from loguru import logger
 
+import settings as _settings
 from core.downloader import download
 from core.trimming import PosTrim
-import settings as _settings
 from settings import SCORE_FOLDER_PATH
 
 _PREVIEW_PATH = "./tmp/preview.jpg"

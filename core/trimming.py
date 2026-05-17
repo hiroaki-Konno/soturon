@@ -1,10 +1,12 @@
-import cv2
-import imgsim
 import os
 import shutil
+
+import cv2
+import imgsim
 from loguru import logger
 
 from settings import DEFAULT_INTERVAL_SEC
+
 
 class PosTrim:
     DEFAULT_INTERVAL_SEC = DEFAULT_INTERVAL_SEC
