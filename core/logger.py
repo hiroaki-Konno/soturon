@@ -1,7 +1,9 @@
 import os
 import sys
+
 from loguru import logger
-from settings import LOG_LEVEL, LOG_DIR
+
+from settings import LOG_DIR, LOG_LEVEL
 
 
 def setup_logger() -> None:

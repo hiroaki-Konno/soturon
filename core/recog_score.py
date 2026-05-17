@@ -1,8 +1,9 @@
 # https://inglow.jp/techblog/python-image-score/ よりコピー、必要そうなら手を加えて組み込みたい
-import numpy
-import cv2
 import os
-import sys
+
+import cv2
+import numpy
+
 from settings import DEBUG_BASE_PATH, RECOG_SCORE_IMG
 
 DS = os.sep

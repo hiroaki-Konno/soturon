@@ -1,8 +1,8 @@
 import threading
 import webbrowser
 
-from core.logger import setup_logger
 from app import app
+from core.logger import setup_logger
 
 PORT = 5000
 

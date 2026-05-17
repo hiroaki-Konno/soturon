@@ -1,14 +1,15 @@
-import cv2
 import os
 import sys
+
+import cv2
 from loguru import logger
 
-from core.logger import setup_logger
 from core.downloader import download
+from core.logger import setup_logger
 from core.trimming import PosTrim as pt
+from settings import SCORE_FOLDER_PATH
 from ui.frame_selector import select_frames
 from ui.region_selector import select_region
-from settings import SCORE_FOLDER_PATH
 
 
 def main():
